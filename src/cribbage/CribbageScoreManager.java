@@ -45,6 +45,7 @@ public class CribbageScoreManager implements CardGameScoreManager {
         }
     }
 
+    @Override
     public void updateScoreActorOfPlayer(int player) {
 
         if(player < nPlayers) {
@@ -65,20 +66,21 @@ public class CribbageScoreManager implements CardGameScoreManager {
     }
 
     /**
-     * Set a new score to a specific player
+     * Set a new score to a specific player, then update the actor
      * @param newScore int score
      * @param player player id, id is less than nPlayers
      */
     public void setScore(int newScore, int player) {
         if(player < nPlayers) {
             scores[player] = newScore;
+            updateScoreActorOfPlayer(player);
         } else {
             System.out.println("player number err in setScore");
         }
     }
 
     /**
-     * Add a new delta score to the player's score
+     * Add a new delta score to the player's score, then update the actor
      * @param deltaScore new incoming score that needs to be added
      * @param player player id
      */
@@ -86,6 +88,7 @@ public class CribbageScoreManager implements CardGameScoreManager {
     public void addScoreToPlayer(int deltaScore, int player) {
         if(player < nPlayers) {
             scores[player] += deltaScore;
+            updateScoreActorOfPlayer(player);
         } else {
             System.out.println("player number err in addScoreToPlayer");
         }

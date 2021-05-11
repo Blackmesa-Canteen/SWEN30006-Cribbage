@@ -11,8 +11,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Cribbage extends CardGame {
     static Cribbage cribbage;  // Provide access to singleton
@@ -20,63 +18,7 @@ public class Cribbage extends CardGame {
     // singleton scoreManager instance
     private CardGameScoreManagerFactory scoreManagerFactory;
     private CardGameScoreManager scoreManager;
-
-    public enum Suit {
-        CLUBS, DIAMONDS, HEARTS, SPADES
-    }
-
-    public enum Rank {
-        // Order of cards is tied to card images
-        ACE(1, 1), KING(13, 10), QUEEN(12, 10), JACK(11, 10), TEN(10, 10), NINE(9, 9), EIGHT(8, 8), SEVEN(7, 7), SIX(6, 6), FIVE(5, 5), FOUR(4, 4), THREE(3, 3), TWO(2, 2);
-        public final int order;
-        public final int value;
-
-        Rank(int order, int value) {
-            this.order = order;
-            this.value = value;
-        }
-    }
-
-    static int cardValue(Card c) {
-        return ((Cribbage.Rank) c.getRank()).value;
-    }
-
-    /*
-    Canonical String representations of Suit, Rank, Card, and Hand
-    */
-    String canonical(Suit s) {
-        return s.toString().substring(0, 1);
-    }
-
-    String canonical(Rank r) {
-        switch (r) {
-            case ACE:
-            case KING:
-            case QUEEN:
-            case JACK:
-            case TEN:
-                return r.toString().substring(0, 1);
-            default:
-                return String.valueOf(r.value);
-        }
-    }
-
-    String canonical(Card c) {
-        return canonical((Rank) c.getRank()) + canonical((Suit) c.getSuit());
-    }
-
-    String canonical(Hand h) {
-        Hand h1 = new Hand(deck); // Clone to sort without changing the original hand
-        for (Card C : h.getCardList()) h1.insert(C.getSuit(), C.getRank(), false);
-        h1.sort(Hand.SortType.POINTPRIORITY, false);
-        return "[" + h1.getCardList().stream().map(this::canonical).collect(Collectors.joining(",")) + "]";
-    }
-
-    class MyCardValues implements Deck.CardValues { // Need to generate a unique value for every card
-        public int[] values(Enum suit) {  // Returns the value for each card in the suit
-            return Stream.of(Rank.values()).mapToInt(r -> (((Rank) r).order - 1) * (Suit.values().length) + suit.ordinal()).toArray();
-        }
-    }
+    private CribbageCardInfoManager cribbageCardInfoManager;
 
     static Random random;
 
@@ -125,7 +67,7 @@ public class Cribbage extends CardGame {
     private final int handWidth = 400;
     private final int cribWidth = 150;
     private final int segmentWidth = 180;
-    private final Deck deck = new Deck(Suit.values(), Rank.values(), "cover", new MyCardValues());
+    private final Deck deck = new Deck(CribbageCardInfoManager.Suit.values(), CribbageCardInfoManager.Rank.values(), "cover", new CribbageCardInfoManager.MyCardValues());
     private final Location[] handLocations = {
             new Location(360, 75),
             new Location(360, 625)
@@ -158,32 +100,6 @@ public class Cribbage extends CardGame {
 
     final Font normalFont = new Font("Serif", Font.BOLD, 24);
     final Font bigFont = new Font("Serif", Font.BOLD, 36);
-
-    /**
-     * init scores to 0 and init text score board
-     */
-//    private void initScoreActors() {
-//        for (int i = 0; i < nPlayers; i++) {
-//            // set scoreArray in ScoreManager
-//            scoreManager.setScore(0, i);
-//
-//            scoreActors[i] = new TextActor("0", Color.WHITE, bgColor, bigFont);
-//            addActor(scoreActors[i], scoreLocations[i]);
-//        }
-//    }
-
-    /**
-     * remove original score board, read new score form scores[player], then add it to the game
-     *
-     */
-//    private void updateScoreActors(int player) {
-//        removeActor(scoreActors[player]);
-//
-//        // get player score from scoreManager's score Array
-//        int playerScore = scoreManager.getScore(player);
-//        scoreActors[player] = new TextActor(String.valueOf(playerScore), Color.WHITE, bgColor, bigFont);
-//        addActor(scoreActors[player], scoreLocations[player]);
-//    }
 
     private void deal(Hand pack, Hand[] hands) {
         System.out.println("deal");
@@ -238,10 +154,10 @@ public class Cribbage extends CardGame {
         dealt.setVerso(false);
 
         // player 1 is dealer
-        if(dealt.getRank() == Rank.JACK) {
+        if(dealt.getRank() == CribbageCardInfoManager.Rank.JACK) {
             scoreManager.addScoreToPlayer(2, 1);
             // refresh Score Actor displaying for dealer
-            scoreManager.updateScoreActorOfPlayer(1);
+//            scoreManager.updateScoreActorOfPlayer(1);
         }
 
         transfer(dealt, starter);
@@ -249,7 +165,7 @@ public class Cribbage extends CardGame {
 
     int total(Hand hand) {
         int total = 0;
-        for (Card c : hand.getCardList()) total += cardValue(c);
+        for (Card c : hand.getCardList()) total += CribbageCardInfoManager.cardValue(c);
         return total;
     }
 
@@ -260,6 +176,7 @@ public class Cribbage extends CardGame {
         boolean newSegment;
 
         void reset(final List<Hand> segments) {
+            System.out.println("new segment");
             segment = new Hand(deck);
             segment.setView(Cribbage.this, new RowLayout(segmentLocations[segments.size()], segmentWidth));
             segment.draw();
@@ -284,9 +201,11 @@ public class Cribbage extends CardGame {
                 if (s.go) {
                     // Another "go" after previous one with no intervening cards
                     // lastPlayer gets 1 point for a "go"
+                    scoreManager.addScoreToPlayer(1, s.lastPlayer);
                     s.newSegment = true;
                 } else {
                     // currentPlayer says "go"
+                    System.out.println("player " + currentPlayer + " says go");
                     s.go = true;
                 }
                 currentPlayer = (currentPlayer + 1) % 2;
@@ -295,10 +214,14 @@ public class Cribbage extends CardGame {
                 transfer(nextCard, s.segment);
                 if (total(s.segment) == thirtyone) {
                     // lastPlayer gets 2 points for a 31
+                    scoreManager.addScoreToPlayer(2, s.lastPlayer);
                     s.newSegment = true;
                     currentPlayer = (currentPlayer + 1) % 2;
                 } else {
                     // if total(segment) == 15, lastPlayer gets 2 points for a 15
+                    if(total(s.segment) == 15) {
+                        scoreManager.addScoreToPlayer(2, s.lastPlayer);
+                    }
                     if (!s.go) { // if it is "go" then same player gets another turn
                         currentPlayer = (currentPlayer + 1) % 2;
                     }
@@ -323,6 +246,9 @@ public class Cribbage extends CardGame {
         cribbage = this;
         setTitle("Cribbage (V" + version + ") Constructed for UofM SWEN30006 with JGameGrid (www.aplu.ch)");
         setStatusText("Initializing...");
+
+        /* init card info */
+        cribbageCardInfoManager = new CribbageCardInfoManager(deck);
 
         /* instantiate a ScoreManager for nPlayers */
         // set up score Manager Factory

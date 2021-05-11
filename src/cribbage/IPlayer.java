@@ -30,7 +30,7 @@ public abstract class IPlayer {
         // System.out.println("lay(" + limit + ")");
         Hand unlayable = new Hand(deck);
         for (Card c : ((ArrayList<Card>) hand.getCardList().clone()))  // Modify list, so need to iterate over clone
-            if (Cribbage.cardValue(c) > limit) {
+            if (CribbageCardInfoManager.cardValue(c) > limit) {
                 c.removeFromHand(true);
                 // System.out.println("hand = " + hand.toString());
                 unlayable.insert(c, false);

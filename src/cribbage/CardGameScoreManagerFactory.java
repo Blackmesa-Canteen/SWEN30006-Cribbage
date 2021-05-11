@@ -3,9 +3,8 @@ package cribbage;
 import ch.aplu.jcardgame.CardGame;
 
 /**
- * @author Xiaotian
  * @program Cribbage
- * @description
+ * @description Factory for Score manager
  * @create 2021-05-11 12:29
  */
 public class CardGameScoreManagerFactory {
