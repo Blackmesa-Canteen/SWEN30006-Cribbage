@@ -13,7 +13,12 @@ public class HumanPlayer extends IPlayer {
 		    {
 		      public void leftDoubleClicked(Card card) { selected = card; hand.setTouchEnabled(false); }
 		    };
-	
+
+	public HumanPlayer(String className) {
+		super();
+		super.setPlayerType(className);
+	}
+
 	@Override
 	public void startSegment(Deck deck, Hand hand) {
 		super.startSegment(deck, hand);

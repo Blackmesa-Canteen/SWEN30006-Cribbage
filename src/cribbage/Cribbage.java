@@ -19,6 +19,7 @@ public class Cribbage extends CardGame {
     private CardGameScoreManagerFactory scoreManagerFactory;
     private CardGameScoreManager scoreManager;
     private CribbageCardInfoManager cribbageCardInfoManager;
+    private LogHandler logHandler;
 
     static Random random;
 
@@ -257,6 +258,15 @@ public class Cribbage extends CardGame {
         scoreManager = scoreManagerFactory.getScoreManager("Cribbage", nPlayers, this);
         scoreManager.initScores();
 
+        /* init logHandler */
+        logHandler = new LogHandler("cribbage.log");
+        logHandler.initFP();
+
+        logHandler.writeMessageToLog("seed," + SEED);
+        for(int i = 0 ; i < nPlayers ; i++) {
+            logHandler.writeMessageToLog(players[i].getPlayerType() + ",P" + i);
+        }
+
         Hand pack = deck.toHand(false);
         RowLayout layout = new RowLayout(starterLocation, 0);
         layout.setRotationAngle(0);
@@ -274,6 +284,7 @@ public class Cribbage extends CardGame {
 
         addActor(new Actor("sprites/gameover.gif"), textLocation);
         setStatusText("Game over.");
+        logHandler.closeFP();
         refresh();
     }
 
@@ -313,9 +324,9 @@ public class Cribbage extends CardGame {
         // Control Player Types
         Class<?> clazz;
         clazz = Class.forName(cribbageProperties.getProperty("Player0"));
-        players[0] = (IPlayer) clazz.getConstructor().newInstance();
+        players[0] = (IPlayer) clazz.getConstructor(String.class).newInstance(cribbageProperties.getProperty("Player0"));
         clazz = Class.forName(cribbageProperties.getProperty("Player1"));
-        players[1] = (IPlayer) clazz.getConstructor().newInstance();
+        players[1] = (IPlayer) clazz.getConstructor(String.class).newInstance(cribbageProperties.getProperty("Player1"));
         // End properties
 
         new Cribbage();

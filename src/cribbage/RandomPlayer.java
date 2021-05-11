@@ -5,6 +5,11 @@ import ch.aplu.jcardgame.Card;
 
 public class RandomPlayer extends IPlayer {
 
+	public RandomPlayer(String className) {
+		super();
+		super.setPlayerType(className);
+	}
+
 	@Override
 	public Card discard() {
 		return Cribbage.randomCard(hand);

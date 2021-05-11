@@ -9,6 +9,8 @@ public abstract class IPlayer {
     Deck deck; // Need this since can't get from hand to deck
     Hand hand;
 
+    String playerType;
+
     void setId(int id) {
         this.id = id;
     }
@@ -25,6 +27,14 @@ public abstract class IPlayer {
     }
 
     abstract Card selectToLay();
+
+    void setPlayerType(String playerType) {
+        this.playerType = playerType;
+    }
+
+    String getPlayerType() {
+        return playerType;
+    }
 
     Card lay(int limit) {
         // System.out.println("lay(" + limit + ")");
