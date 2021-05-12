@@ -168,7 +168,7 @@ public class Cribbage extends CardGame {
         if(dealt.getRank() == CribbageCardInfoManager.Rank.JACK) {
             System.out.println("starter card J 2 scores");
             scoreManager.addScoreToPlayer(2, 1,
-                    "[" + cribbageCardInfoManager.canonical(dealt) + "]");
+                    "starter,[" + cribbageCardInfoManager.canonical(dealt) + "]");
         }
 
         transfer(dealt, starter);
