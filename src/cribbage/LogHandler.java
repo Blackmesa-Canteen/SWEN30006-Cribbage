@@ -53,4 +53,12 @@ public class LogHandler {
             e.printStackTrace();
         }
     }
+
+    public void writeLineMessageToLog(String message) {
+        try {
+            out.write(message );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

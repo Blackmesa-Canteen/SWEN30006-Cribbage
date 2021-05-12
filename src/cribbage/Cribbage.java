@@ -73,10 +73,7 @@ public class Cribbage extends CardGame {
             new Location(360, 75),
             new Location(360, 625)
     };
-//    private final Location[] scoreLocations = {
-//            new Location(590, 25),
-//            new Location(590, 675)
-//    };
+
     private final Location[] segmentLocations = {  // need at most three as 3x31=93 > 2x4x10=80
             new Location(150, 350),
             new Location(400, 350),
@@ -86,7 +83,6 @@ public class Cribbage extends CardGame {
     private final Location cribLocation = new Location(700, 625);
     private final Location seedLocation = new Location(5, 25);
     // private final TargetArea cribTarget = new TargetArea(cribLocation, CardOrientation.NORTH, 1, true);
-//    private final Actor[] scoreActors = {null, null}; //, null, null };
     private final Location textLocation = new Location(350, 450);
     private final Hand[] hands = new Hand[nPlayers];
     private Hand starter;
@@ -97,7 +93,6 @@ public class Cribbage extends CardGame {
     }
 
     static private final IPlayer[] players = new IPlayer[nPlayers];
-//    private final int[] scores = new int[nPlayers];
 
     final Font normalFont = new Font("Serif", Font.BOLD, 24);
     final Font bigFont = new Font("Serif", Font.BOLD, 36);
@@ -123,6 +118,7 @@ public class Cribbage extends CardGame {
         dealingOut(pack, hands);
         for (int i = 0; i < nPlayers; i++) {
             hands[i].sort(Hand.SortType.POINTPRIORITY, true);
+            logHandler.writeMessageToLog("deal,P"+ i + ","+ cribbageCardInfoManager.canonical(hands[i]));
         }
         layouts[0].setStepDelay(0);
     }
@@ -136,10 +132,23 @@ public class Cribbage extends CardGame {
         // crib.setTargetArea(cribTarget);
         crib.draw();
         for (IPlayer player : players) {
+            Card playerDiscardCard = null;
+            Hand cardsDiscarded = new Hand(deck);
+            StringBuilder playerDiscardLogStr = new StringBuilder("discard,P" + player.id + ",");
             for (int i = 0; i < nDiscards; i++) {
-                transfer(player.discard(), crib);
+                playerDiscardCard = player.discard();
+                /* store cloned Card obj to cardsDiscarded for sorting log */
+                cardsDiscarded.insert(playerDiscardCard.clone(), false);
+                transfer(playerDiscardCard, crib);
             }
+
+            /* sort log */
+            cardsDiscarded.sort(Hand.SortType.POINTPRIORITY, true);
+            /* display log */
+            playerDiscardLogStr.append(cribbageCardInfoManager.canonical(cardsDiscarded));
+            logHandler.writeMessageToLog(playerDiscardLogStr.toString());
             crib.sort(Hand.SortType.POINTPRIORITY, true);
+
         }
     }
 
@@ -154,11 +163,13 @@ public class Cribbage extends CardGame {
         Card dealt = randomCard(pack);
         dealt.setVerso(false);
 
+        logHandler.writeMessageToLog("starter," + cribbageCardInfoManager.canonical(dealt));
+
         // player 1 is dealer
         if(dealt.getRank() == CribbageCardInfoManager.Rank.JACK) {
-            scoreManager.addScoreToPlayer(2, 1);
-            // refresh Score Actor displaying for dealer
-//            scoreManager.updateScoreActorOfPlayer(1);
+            System.out.println("starter card J 2 scores");
+            scoreManager.addScoreToPlayer(2, 1,
+                    "[" + cribbageCardInfoManager.canonical(dealt) + "]");
         }
 
         transfer(dealt, starter);
@@ -194,15 +205,25 @@ public class Cribbage extends CardGame {
         int currentPlayer = 0; // Player 1 is dealer
         Segment s = new Segment();
         s.reset(segments);
-        while (!(players[0].emptyHand() && players[1].emptyHand())) {
+        while (true) {
+            /* if all players have no cards, the player who placed the last card scores one point */
+            if((players[0].emptyHand() && players[1].emptyHand())) {
+                System.out.println("player "+ currentPlayer + " 和另一个玩家全没牌了，另一玩家是最后出牌的，go得一分");
+                System.out.println("player " + s.lastPlayer +" gets 1 go score");
+                scoreManager.addScoreToPlayer(1, s.lastPlayer, "go");
+                break;
+            }
+
             // System.out.println("segments.size() = " + segments.size());
             Card nextCard = players[currentPlayer].lay(thirtyone - total(s.segment));
-            System.out.println("player: " + currentPlayer +" runnning");
+            System.out.println("player: " + currentPlayer +" playing");
             if (nextCard == null) {
+                System.out.println("player "+currentPlayer+"没牌了,判断这轮go不go: " + s.go);
                 if (s.go) {
                     // Another "go" after previous one with no intervening cards
                     // lastPlayer gets 1 point for a "go"
-                    scoreManager.addScoreToPlayer(1, s.lastPlayer);
+                    System.out.println("player " + s.lastPlayer +" gets 1 go score");
+                    scoreManager.addScoreToPlayer(1, s.lastPlayer, "go");
                     s.newSegment = true;
                 } else {
                     // currentPlayer says "go"
@@ -213,15 +234,23 @@ public class Cribbage extends CardGame {
             } else {
                 s.lastPlayer = currentPlayer; // last Player to play a card in this segment
                 transfer(nextCard, s.segment);
+                logHandler.writeMessageToLog("play,P" +
+                        s.lastPlayer +
+                        "," +
+                        total(s.segment) +
+                        "," +
+                        cribbageCardInfoManager.canonical(nextCard));
                 if (total(s.segment) == thirtyone) {
                     // lastPlayer gets 2 points for a 31
-                    scoreManager.addScoreToPlayer(2, s.lastPlayer);
+                    System.out.println("player " + s.lastPlayer +" gets 2 score for 31 points");
+                    scoreManager.addScoreToPlayer(2, s.lastPlayer, "thirtyone");
                     s.newSegment = true;
                     currentPlayer = (currentPlayer + 1) % 2;
                 } else {
                     // if total(segment) == 15, lastPlayer gets 2 points for a 15
                     if(total(s.segment) == 15) {
-                        scoreManager.addScoreToPlayer(2, s.lastPlayer);
+                        System.out.println("player " + s.lastPlayer +" gets 2 score for 15 points");
+                        scoreManager.addScoreToPlayer(2, s.lastPlayer, "fifteen," + cribbageCardInfoManager.canonical(s.segment));
                     }
                     if (!s.go) { // if it is "go" then same player gets another turn
                         currentPlayer = (currentPlayer + 1) % 2;
@@ -248,6 +277,15 @@ public class Cribbage extends CardGame {
         setTitle("Cribbage (V" + version + ") Constructed for UofM SWEN30006 with JGameGrid (www.aplu.ch)");
         setStatusText("Initializing...");
 
+        /* init logHandler */
+        logHandler = new LogHandler("cribbage.log");
+        logHandler.initFP();
+
+        logHandler.writeMessageToLog("seed," + SEED);
+        for(int i = 0 ; i < nPlayers ; i++) {
+            logHandler.writeMessageToLog(players[i].getPlayerType() + ",P" + i);
+        }
+
         /* init card info */
         cribbageCardInfoManager = new CribbageCardInfoManager(deck);
 
@@ -257,15 +295,7 @@ public class Cribbage extends CardGame {
         // create a scoreManager for this Cribbage game
         scoreManager = scoreManagerFactory.getScoreManager("Cribbage", nPlayers, this);
         scoreManager.initScores();
-
-        /* init logHandler */
-        logHandler = new LogHandler("cribbage.log");
-        logHandler.initFP();
-
-        logHandler.writeMessageToLog("seed," + SEED);
-        for(int i = 0 ; i < nPlayers ; i++) {
-            logHandler.writeMessageToLog(players[i].getPlayerType() + ",P" + i);
-        }
+        scoreManager.attachLogHandler(logHandler);
 
         Hand pack = deck.toHand(false);
         RowLayout layout = new RowLayout(starterLocation, 0);
