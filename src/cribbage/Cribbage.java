@@ -15,11 +15,10 @@ import java.util.*;
 public class Cribbage extends CardGame {
     static Cribbage cribbage;  // Provide access to singleton
 
-    // singleton scoreManager instance
-    private CardGameScoreManagerFactory scoreManagerFactory;
-    private CardGameScoreManager scoreManager;
-    private CribbageCardInfoManager cribbageCardInfoManager;
-    private LogHandler logHandler;
+    private final CardGameScoreManagerFactory scoreManagerFactory;
+    private final CardGameScoreManager scoreManager;
+    private final CribbageCardInfoManager cribbageCardInfoManager;
+    private final LogHandler logHandler;
 
     static Random random;
 

@@ -85,6 +85,7 @@ public class CribbageScoreManager implements CardGameScoreManager {
      * Add a new delta score to the player's score, then update the actor
      * @param deltaScore new incoming score that needs to be added
      * @param player player id
+     * @param reason reason why we add the score to the player
      */
     @Override
     public void addScoreToPlayer(int deltaScore, int player, String reason) {
