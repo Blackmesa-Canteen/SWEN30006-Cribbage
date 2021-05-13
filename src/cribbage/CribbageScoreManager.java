@@ -16,7 +16,7 @@ import java.awt.*;
 public class CribbageScoreManager implements CardGameScoreManager {
 
     CardGame cardGame;
-    LogHandler logHandler;
+//    LogHandler logHandler;
 
     private final Location[] scoreLocations = {
             new Location(590, 25),
@@ -89,21 +89,9 @@ public class CribbageScoreManager implements CardGameScoreManager {
      */
     @Override
     public void addScoreToPlayer(int deltaScore, int player, String reason) {
-        if(logHandler == null) {
-            System.out.println("logHandler for ScoreManager is NULL");
-            return;
-        }
         if(player < nPlayers) {
             scores[player] += deltaScore;
             updateScoreActorOfPlayer(player);
-            logHandler.writeMessageToLog("score,P" +
-                    player +
-                    "," +
-                    scores[player] +
-                    "," +
-                    deltaScore +
-                    "," +
-                    reason);
         } else {
             System.out.println("player number err in addScoreToPlayer");
         }
@@ -130,8 +118,8 @@ public class CribbageScoreManager implements CardGameScoreManager {
         return 0;
     }
 
-    @Override
-    public void attachLogHandler(LogHandler logHandler) {
-        this.logHandler = logHandler;
-    }
+//    @Override
+//    public void attachLogHandler(LogHandler logHandler) {
+//        this.logHandler = logHandler;
+//    }
 }

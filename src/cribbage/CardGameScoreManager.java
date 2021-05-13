@@ -13,5 +13,5 @@ public interface CardGameScoreManager {
     public void addScoreToPlayer(int deltaScore, int player, String reason);
     public void minusScoreToPlayer(int deltaScore, int player, String reason);
     public int getScore(int player);
-    public void attachLogHandler(LogHandler logHandler);
+
 }

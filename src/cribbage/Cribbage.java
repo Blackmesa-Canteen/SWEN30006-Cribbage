@@ -16,7 +16,7 @@ public class Cribbage extends CardGame {
     static Cribbage cribbage;  // Provide access to singleton
 
     private final CardGameScoreManagerFactory scoreManagerFactory;
-    private final CardGameScoreManager scoreManager;
+    private CardGameScoreManager scoreManager;
     private final CribbageCardInfoManager cribbageCardInfoManager;
     private final LogHandler logHandler;
 
@@ -289,12 +289,19 @@ public class Cribbage extends CardGame {
         cribbageCardInfoManager = new CribbageCardInfoManager(deck);
 
         /* instantiate a ScoreManager for nPlayers */
-        // set up score Manager Factory
+        /* set up score Manager Factory */
         scoreManagerFactory = CardGameScoreManagerFactory.getInstance();
-        // create a scoreManager for this Cribbage game
+        /* create a scoreManager for this Cribbage game */
         scoreManager = scoreManagerFactory.getScoreManager("Cribbage", nPlayers, this);
         scoreManager.initScores();
-        scoreManager.attachLogHandler(logHandler);
+
+        /* DEBUG: decorate score manager with Console Log functions */
+        scoreManager = new ConsoleLogScoreDecorator(scoreManager);
+
+        /* decorate score manager with File Log functions */
+        scoreManager = new FileLogScoreDecorator(scoreManager, logHandler);
+
+
 
         Hand pack = deck.toHand(false);
         RowLayout layout = new RowLayout(starterLocation, 0);
