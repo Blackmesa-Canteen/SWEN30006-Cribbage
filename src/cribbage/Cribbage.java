@@ -18,7 +18,7 @@ public class Cribbage extends CardGame {
     private final CardGameScoreManagerFactory scoreManagerFactory;
     private CardGameScoreManager scoreManager;
     private final CribbageCardInfoManager cribbageCardInfoManager;
-    private final LogHandler logHandler;
+    private final FileLogHandler fileLogHandler;
 
     static Random random;
 
@@ -117,7 +117,7 @@ public class Cribbage extends CardGame {
         dealingOut(pack, hands);
         for (int i = 0; i < nPlayers; i++) {
             hands[i].sort(Hand.SortType.POINTPRIORITY, true);
-            logHandler.writeMessageToLog("deal,P"+ i + ","+ cribbageCardInfoManager.canonical(hands[i]));
+            fileLogHandler.writeMessageToLog("deal,P"+ i + ","+ cribbageCardInfoManager.canonical(hands[i]));
         }
         layouts[0].setStepDelay(0);
     }
@@ -145,7 +145,7 @@ public class Cribbage extends CardGame {
             cardsDiscarded.sort(Hand.SortType.POINTPRIORITY, true);
             /* display log */
             playerDiscardLogStr.append(cribbageCardInfoManager.canonical(cardsDiscarded));
-            logHandler.writeMessageToLog(playerDiscardLogStr.toString());
+            fileLogHandler.writeMessageToLog(playerDiscardLogStr.toString());
             crib.sort(Hand.SortType.POINTPRIORITY, true);
 
         }
@@ -162,7 +162,7 @@ public class Cribbage extends CardGame {
         Card dealt = randomCard(pack);
         dealt.setVerso(false);
 
-        logHandler.writeMessageToLog("starter," + cribbageCardInfoManager.canonical(dealt));
+        fileLogHandler.writeMessageToLog("starter," + cribbageCardInfoManager.canonical(dealt));
 
         // player 1 is dealer
         if(dealt.getRank() == CribbageCardInfoManager.Rank.JACK) {
@@ -233,7 +233,7 @@ public class Cribbage extends CardGame {
             } else {
                 s.lastPlayer = currentPlayer; // last Player to play a card in this segment
                 transfer(nextCard, s.segment);
-                logHandler.writeMessageToLog("play,P" +
+                fileLogHandler.writeMessageToLog("play,P" +
                         s.lastPlayer +
                         "," +
                         total(s.segment) +
@@ -277,12 +277,12 @@ public class Cribbage extends CardGame {
         setStatusText("Initializing...");
 
         /* init logHandler */
-        logHandler = new LogHandler("cribbage.log");
-        logHandler.initFP();
+        fileLogHandler = new FileLogHandler("cribbage.log");
+        fileLogHandler.initFP();
 
-        logHandler.writeMessageToLog("seed," + SEED);
+        fileLogHandler.writeMessageToLog("seed," + SEED);
         for(int i = 0 ; i < nPlayers ; i++) {
-            logHandler.writeMessageToLog(players[i].getPlayerType() + ",P" + i);
+            fileLogHandler.writeMessageToLog(players[i].getPlayerType() + ",P" + i);
         }
 
         /* init card info */
@@ -299,7 +299,7 @@ public class Cribbage extends CardGame {
         scoreManager = new ConsoleLogScoreDecorator(scoreManager);
 
         /* decorate score manager with File Log functions */
-        scoreManager = new FileLogScoreDecorator(scoreManager, logHandler);
+        scoreManager = new FileLogScoreDecorator(scoreManager, fileLogHandler);
 
 
 
@@ -320,7 +320,7 @@ public class Cribbage extends CardGame {
 
         addActor(new Actor("sprites/gameover.gif"), textLocation);
         setStatusText("Game over.");
-        logHandler.closeFP();
+        fileLogHandler.closeFP();
         refresh();
     }
 

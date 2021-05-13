@@ -7,11 +7,11 @@ package cribbage;
  */
 public class FileLogScoreDecorator extends ScoreManagerDecorator {
 
-    private final LogHandler logHandler;
+    private final FileLogHandler fileLogHandler;
 
-    public FileLogScoreDecorator(CardGameScoreManager wrappee, LogHandler logHandler) {
+    public FileLogScoreDecorator(CardGameScoreManager wrappee, FileLogHandler fileLogHandler) {
         super(wrappee);
-        this.logHandler = logHandler;
+        this.fileLogHandler = fileLogHandler;
     }
 
     @Override
@@ -37,11 +37,11 @@ public class FileLogScoreDecorator extends ScoreManagerDecorator {
     @Override
     public void addScoreToPlayer(int deltaScore, int player, String reason) {
         wrappee.addScoreToPlayer(deltaScore, player, reason);
-        if(logHandler == null) {
+        if(fileLogHandler == null) {
             System.out.println("logHandler for FileLogScoreDecorator is NULL");
             return;
         }
-        logHandler.writeMessageToLog("score,P" +
+        fileLogHandler.writeMessageToLog("score,P" +
                 player +
                 "," +
                 wrappee.getScore(player) +
@@ -54,11 +54,11 @@ public class FileLogScoreDecorator extends ScoreManagerDecorator {
     @Override
     public void minusScoreToPlayer(int deltaScore, int player, String reason) {
         wrappee.minusScoreToPlayer(deltaScore, player, reason);
-        if(logHandler == null) {
+        if(fileLogHandler == null) {
             System.out.println("logHandler for FileLogScoreDecorator is NULL");
             return;
         }
-        logHandler.writeMessageToLog("score,P" +
+        fileLogHandler.writeMessageToLog("score,P" +
                 player +
                 "," +
                 wrappee.getScore(player) +
