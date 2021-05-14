@@ -19,6 +19,7 @@ public class Cribbage extends CardGame {
     private CardGameScoreManager scoreManager;
     private final CribbageCardInfoManager cribbageCardInfoManager;
     private final FileLogHandler fileLogHandler;
+    private final CardHistoryManager historyManager;
 
     static Random random;
 
@@ -130,6 +131,7 @@ public class Cribbage extends CardGame {
         crib.setView(this, layout);
         // crib.setTargetArea(cribTarget);
         crib.draw();
+
         for (IPlayer player : players) {
             Card playerDiscardCard = null;
             Hand cardsDiscarded = new Hand(deck);
@@ -199,6 +201,12 @@ public class Cribbage extends CardGame {
 
     private void play() {
         System.out.println("play");
+
+        /* create cardHistory for each player */
+        for(int i = 0; i < nPlayers; i++) {
+            historyManager.creatCardHistoryPile("player" + i);
+        }
+
         final int thirtyone = 31;
         List<Hand> segments = new ArrayList<>();
         int currentPlayer = 0; // Player 1 is dealer
@@ -232,6 +240,11 @@ public class Cribbage extends CardGame {
                 currentPlayer = (currentPlayer + 1) % 2;
             } else {
                 s.lastPlayer = currentPlayer; // last Player to play a card in this segment
+
+                /* record the card into history manager */
+                System.out.println("player"+currentPlayer+" play: " + cribbageCardInfoManager.canonical(nextCard));
+                historyManager.recordCardToHistoryPile("player" + currentPlayer, nextCard);
+
                 transfer(nextCard, s.segment);
                 fileLogHandler.writeMessageToLog("play,P" +
                         s.lastPlayer +
@@ -266,8 +279,37 @@ public class Cribbage extends CardGame {
     void showHandsCrib() {
         System.out.println("show");
         // score player 0 (non dealer)
+        showCards(0);
+
         // score player 1 (dealer)
+        showCards(1);
+
         // score crib (for dealer)
+        showCrib(1);
+
+    }
+
+    private void showCards(int player) {
+        if(player < nPlayers) {
+            fileLogHandler.writeMessageToLog("show,P" +
+                    player +
+                    "," +
+                    cribbageCardInfoManager.canonical(starter.getFirst()) +
+                    "+" +
+                    cribbageCardInfoManager.canonical(historyManager.getCardHistoryPile("player"+player)));
+            return;
+        }
+
+        System.out.println("showCards: player id error");
+    }
+
+    private void showCrib(int dealer) {
+        fileLogHandler.writeMessageToLog("show,P" +
+                dealer +
+                "," +
+                cribbageCardInfoManager.canonical(starter.getFirst()) +
+                "+" +
+                cribbageCardInfoManager.canonical(crib));
     }
 
     public Cribbage() {
@@ -301,7 +343,8 @@ public class Cribbage extends CardGame {
         /* decorate score manager with File Log functions */
         scoreManager = new FileLogScoreDecorator(scoreManager, fileLogHandler);
 
-
+        /* init card History manager */
+        historyManager = new CardHistoryManager(deck);
 
         Hand pack = deck.toHand(false);
         RowLayout layout = new RowLayout(starterLocation, 0);
