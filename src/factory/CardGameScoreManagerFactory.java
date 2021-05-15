@@ -1,6 +1,8 @@
-package cribbage;
+package factory;
 
 import ch.aplu.jcardgame.CardGame;
+import scoreManager.CardGameScoreManager;
+import scoreManager.CribbageScoreManager;
 
 /**
  * @program Cribbage

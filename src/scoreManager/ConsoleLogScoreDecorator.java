@@ -1,17 +1,13 @@
-package cribbage;
+package scoreManager;
 
 /**
  * @program Cribbage
  * @description
- * @create 2021-05-13 10:08
+ * @create 2021-05-13 10:22
  */
-public class FileLogScoreDecorator extends ScoreManagerDecorator {
-
-    private final FileLogHandler fileLogHandler;
-
-    public FileLogScoreDecorator(CardGameScoreManager wrappee, FileLogHandler fileLogHandler) {
+public class ConsoleLogScoreDecorator  extends ScoreManagerDecorator{
+    public ConsoleLogScoreDecorator(CardGameScoreManager wrappee) {
         super(wrappee);
-        this.fileLogHandler = fileLogHandler;
     }
 
     @Override
@@ -37,11 +33,7 @@ public class FileLogScoreDecorator extends ScoreManagerDecorator {
     @Override
     public void addScoreToPlayer(int deltaScore, int player, String reason) {
         wrappee.addScoreToPlayer(deltaScore, player, reason);
-        if(fileLogHandler == null) {
-            System.out.println("logHandler for FileLogScoreDecorator is NULL");
-            return;
-        }
-        fileLogHandler.writeMessageToLog("score,P" +
+        System.out.println("score,P" +
                 player +
                 "," +
                 wrappee.getScore(player) +
@@ -54,11 +46,7 @@ public class FileLogScoreDecorator extends ScoreManagerDecorator {
     @Override
     public void minusScoreToPlayer(int deltaScore, int player, String reason) {
         wrappee.minusScoreToPlayer(deltaScore, player, reason);
-        if(fileLogHandler == null) {
-            System.out.println("logHandler for FileLogScoreDecorator is NULL");
-            return;
-        }
-        fileLogHandler.writeMessageToLog("score,P" +
+        System.out.println("score,P" +
                 player +
                 "," +
                 wrappee.getScore(player) +

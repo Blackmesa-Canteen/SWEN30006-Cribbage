@@ -1,4 +1,4 @@
-package cribbage;
+package gameHelper;
 
 import ch.aplu.jcardgame.*;
 import ch.aplu.jgamegrid.*;

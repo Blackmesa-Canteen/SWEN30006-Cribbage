@@ -1,6 +1,7 @@
 package cribbage;
 
 import ch.aplu.jcardgame.*;
+import gameHelper.CribbageCardInfoManager;
 
 import java.util.ArrayList;
 

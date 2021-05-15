@@ -1,4 +1,4 @@
-package cribbage;
+package scoreManager;
 
 import ch.aplu.jcardgame.CardGame;
 

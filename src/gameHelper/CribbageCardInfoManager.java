@@ -1,4 +1,4 @@
-package cribbage;
+package gameHelper;
 
 import ch.aplu.jcardgame.Card;
 import ch.aplu.jcardgame.Deck;
@@ -67,13 +67,13 @@ public class CribbageCardInfoManager {
         return "[" + h1.getCardList().stream().map(this::canonical).collect(Collectors.joining(",")) + "]";
     }
 
-    static class MyCardValues implements Deck.CardValues { // Need to generate a unique value for every card
+    public static class MyCardValues implements Deck.CardValues { // Need to generate a unique value for every card
         public int[] values(Enum suit) {  // Returns the value for each card in the suit
             return Stream.of(Rank.values()).mapToInt(r -> (((Rank) r).order - 1) * (Suit.values().length) + suit.ordinal()).toArray();
         }
     }
 
-    static int cardValue(Card c) {
+    public static int cardValue(Card c) {
         return ((Rank) c.getRank()).value;
     }
 }
