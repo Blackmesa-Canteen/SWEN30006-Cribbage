@@ -25,12 +25,17 @@ public class JackScoreStrategy implements CribbageScoreStrategy {
 
     @Override
     public void calcScore(int player, Hand segmentHand, Hand starter) {
+
+        final int jack_score = 1;
+
         Hand calculationHand = new Hand(deck);
+        Hand handWithoutStarter = new Hand(deck);
 
         /* set up calculationHand for counting scores */
         /* cards in hand + starter */
         for(Card card : segmentHand.getCardList()) {
             calculationHand.insert(card.clone(), false);
+            handWithoutStarter.insert(card.clone(), false);
         }
 
         for(Card card : starter.getCardList()) {
@@ -38,6 +43,17 @@ public class JackScoreStrategy implements CribbageScoreStrategy {
         }
 
         calculationHand.sort(Hand.SortType.POINTPRIORITY, false);
-        //TODO: jack score calc for Show phase
+        handWithoutStarter.sort(Hand.SortType.POINTPRIORITY, false);
+
+        CribbageCardInfoManager.Suit starterSuit = (CribbageCardInfoManager.Suit) starter.getFirst().getSuit();
+        /* get J s */
+        Hand jFromHand = handWithoutStarter.extractCardsWithRank(CribbageCardInfoManager.Rank.JACK);
+
+        if(jFromHand.getNumberOfCardsWithSuit(starterSuit) == 1) {
+            /* if find one J that has the same suit as starter's  */
+            Hand theOne = jFromHand.extractCardsWithSuit(starterSuit);
+            scoreManager.addScoreToPlayer(jack_score, player,
+                    "jack," + cardInfoManager.canonical(theOne));
+        }
     }
 }
