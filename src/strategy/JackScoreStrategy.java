@@ -25,6 +25,6 @@ public class JackScoreStrategy implements CribbageScoreStrategy {
 
     @Override
     public void calcScore(int player, Hand segmentHand, Hand starter) {
-
+        //TODO: jack score calc for Show phase
     }
 }

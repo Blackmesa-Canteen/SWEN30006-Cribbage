@@ -25,6 +25,6 @@ public class PlayPhaseRunScoreStrategy implements CribbageScoreStrategy {
 
     @Override
     public void calcScore(int player, Hand segmentHand, Hand starter) {
-
+        //TODO: run score calc for play phase
     }
 }

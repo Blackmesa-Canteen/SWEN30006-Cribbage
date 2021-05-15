@@ -26,7 +26,7 @@ public class ShowPhaseTotalPointsStrategy implements CribbageScoreStrategy {
 
     @Override
     public void calcScore(int player, Hand segmentHand, Hand starter) {
-        // !!! TODO: total calc for Show phase
+
 
         final int score_for_fifteen = 2;
 
@@ -43,6 +43,8 @@ public class ShowPhaseTotalPointsStrategy implements CribbageScoreStrategy {
         }
 
         calculationHand.sort(Hand.SortType.POINTPRIORITY, false);
+
+        //TODO: total calc for Show phase
 
 
 

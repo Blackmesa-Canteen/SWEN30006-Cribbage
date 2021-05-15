@@ -25,6 +25,6 @@ public class FlushScoreStrategy implements CribbageScoreStrategy {
 
     @Override
     public void calcScore(int player, Hand segmentHand, Hand starter) {
-
+        //TODO: flush score calc for Show phase
     }
 }
