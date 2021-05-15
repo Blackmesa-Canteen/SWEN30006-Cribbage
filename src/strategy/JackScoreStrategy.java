@@ -25,6 +25,19 @@ public class JackScoreStrategy implements CribbageScoreStrategy {
 
     @Override
     public void calcScore(int player, Hand segmentHand, Hand starter) {
+        Hand calculationHand = new Hand(deck);
+
+        /* set up calculationHand for counting scores */
+        /* cards in hand + starter */
+        for(Card card : segmentHand.getCardList()) {
+            calculationHand.insert(card.clone(), false);
+        }
+
+        for(Card card : starter.getCardList()) {
+            calculationHand.insert(card.clone(), false);
+        }
+
+        calculationHand.sort(Hand.SortType.POINTPRIORITY, false);
         //TODO: jack score calc for Show phase
     }
 }
