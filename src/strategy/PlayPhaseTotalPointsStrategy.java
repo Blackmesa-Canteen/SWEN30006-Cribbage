@@ -11,7 +11,7 @@ import gameHelper.CribbageCardInfoManager;
  * @description
  * @create 2021-05-14 21:49
  */
-public class TotalPointsScoreStrategy implements CribbageScoreStrategy {
+public class PlayPhaseTotalPointsStrategy implements CribbageScoreStrategy {
 
 
 
@@ -19,14 +19,14 @@ public class TotalPointsScoreStrategy implements CribbageScoreStrategy {
     CardGameScoreManager scoreManager = null;
     Deck deck = null;
 
-    public TotalPointsScoreStrategy(CribbageCardInfoManager cardInfoManager, CardGameScoreManager scoreManager, Deck deck) {
+    public PlayPhaseTotalPointsStrategy(CribbageCardInfoManager cardInfoManager, CardGameScoreManager scoreManager, Deck deck) {
         this.cardInfoManager = cardInfoManager;
         this.scoreManager = scoreManager;
         this.deck = deck;
     }
 
     @Override
-    public void calcPlayScore(int player, Card newCard, Hand segmentHand) {
+    public void calcScore(int player, Hand segmentHand, Hand starter) {
 
         final int score_for_thirty_one = 2;
         final int score_for_fifteen = 2;
@@ -50,30 +50,7 @@ public class TotalPointsScoreStrategy implements CribbageScoreStrategy {
         }
     }
 
-    @Override
-    public void calcShowScore(int player, Hand playerHand, Hand starter) {
 
-        // !!! TODO: total calc for Show phase
-
-        final int score_for_fifteen = 2;
-
-        Hand calculationHand = new Hand(deck);
-
-        /* set up calculationHand for counting scores */
-        /* cards in hand + starter */
-        for(Card card : playerHand.getCardList()) {
-            calculationHand.insert(card.clone(), false);
-        }
-
-        for(Card card : starter.getCardList()) {
-            calculationHand.insert(card.clone(), false);
-        }
-
-        calculationHand.sort(Hand.SortType.POINTPRIORITY, false);
-
-
-
-    }
 
     private int total(Hand hand) {
         int total = 0;

@@ -5,14 +5,15 @@ package cribbage;
 import ch.aplu.jcardgame.*;
 import ch.aplu.jgamegrid.*;
 import factory.CardGameScoreManagerFactory;
+import factory.CribbageScoreStrategyFactory;
 import gameHelper.CribbageCardInfoManager;
 import gameHelper.FileLogHandler;
 import scoreManager.CardGameScoreManager;
-import scoreManager.CardHistoryManager;
+import gameHelper.CardHistoryManager;
 import scoreManager.ConsoleLogScoreDecorator;
 import scoreManager.FileLogScoreDecorator;
 import strategy.CribbageScoreStrategy;
-import strategy.PairScoreStrategy;
+import strategy.PlayPhasePairScoreStrategy;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -24,13 +25,12 @@ import java.util.*;
 public class Cribbage extends CardGame {
     static Cribbage cribbage;  // Provide access to singleton
 
-    private final CardGameScoreManagerFactory scoreManagerFactory;
     private CardGameScoreManager scoreManager;
     private final CribbageCardInfoManager cribbageCardInfoManager;
     private final FileLogHandler fileLogHandler;
     private final CardHistoryManager historyManager;
 
-    private final CribbageScoreStrategy pairDemoStrategy;
+
 
     static Random random;
 
@@ -210,12 +210,12 @@ public class Cribbage extends CardGame {
         }
     }
 
-    private void play() {
+    private void play(CribbageScoreStrategy playPhaseStrategy) {
         System.out.println("play");
 
         /* create cardHistory for each player */
         for(int i = 0; i < nPlayers; i++) {
-            historyManager.creatCardHistoryPile("strategy" + i);
+            historyManager.creatCardHistoryPile("player" + i);
         }
 
         final int thirtyone = 31;
@@ -226,8 +226,8 @@ public class Cribbage extends CardGame {
         while (true) {
             /* if all players have no cards, the player who placed the last card scores one point */
             if((players[0].emptyHand() && players[1].emptyHand())) {
-                System.out.println("strategy " + currentPlayer + " 和另一个玩家全没牌了，另一玩家是最后出牌的，go得一分");
-                System.out.println("strategy " + s.lastPlayer +" gets 1 go score");
+                System.out.println("player " + currentPlayer + " 和另一个玩家全没牌了，另一玩家是最后出牌的，go得一分");
+                System.out.println("player " + s.lastPlayer +" gets 1 go score");
                 scoreManager.addScoreToPlayer(1, s.lastPlayer, "go");
                 break;
             }
@@ -236,16 +236,16 @@ public class Cribbage extends CardGame {
             Card nextCard = players[currentPlayer].lay(thirtyone - total(s.segment));
             System.out.println("player: " + currentPlayer +" playing");
             if (nextCard == null) {
-                System.out.println("strategy " +currentPlayer+"没牌了,判断这轮go不go: " + s.go);
+                System.out.println("player " +currentPlayer+"没牌了,判断这轮go不go: " + s.go);
                 if (s.go) {
                     // Another "go" after previous one with no intervening cards
                     // lastPlayer gets 1 point for a "go"
-                    System.out.println("strategy " + s.lastPlayer +" gets 1 go score");
+                    System.out.println("player " + s.lastPlayer +" gets 1 go score");
                     scoreManager.addScoreToPlayer(1, s.lastPlayer, "go");
                     s.newSegment = true;
                 } else {
                     // currentPlayer says "go"
-                    System.out.println("strategy " + currentPlayer + " says go");
+                    System.out.println("player " + currentPlayer + " says go");
                     s.go = true;
                 }
                 currentPlayer = (currentPlayer + 1) % 2;
@@ -253,8 +253,8 @@ public class Cribbage extends CardGame {
                 s.lastPlayer = currentPlayer; // last Player to play a card in this segment
 
                 /* record the card into history manager */
-                System.out.println("strategy" +currentPlayer+" play: " + cribbageCardInfoManager.canonical(nextCard));
-                historyManager.recordCardToHistoryPile("strategy" + currentPlayer, nextCard);
+                System.out.println("player" +currentPlayer+" play: " + cribbageCardInfoManager.canonical(nextCard));
+                historyManager.recordCardToHistoryPile("player" + currentPlayer, nextCard);
 
                 transfer(nextCard, s.segment);
                 fileLogHandler.writeMessageToLog("play,P" +
@@ -264,21 +264,18 @@ public class Cribbage extends CardGame {
                         "," +
                         cribbageCardInfoManager.canonical(nextCard));
 
-                /* calc pair score demo */
-                pairDemoStrategy.calcPlayScore(currentPlayer, nextCard, s.segment);
+                /* calc play phase score */
+                playPhaseStrategy.calcScore(currentPlayer, s.segment, starter);
 
                 if (total(s.segment) == thirtyone) {
                     // lastPlayer gets 2 points for a 31
-                    System.out.println("strategy " + s.lastPlayer +" gets 2 score for 31 points");
-                    scoreManager.addScoreToPlayer(2, s.lastPlayer, "thirtyone");
+                    /* has been calculated in strategy */
                     s.newSegment = true;
                     currentPlayer = (currentPlayer + 1) % 2;
                 } else {
                     // if total(segment) == 15, lastPlayer gets 2 points for a 15
-                    if(total(s.segment) == 15) {
-                        System.out.println("strategy " + s.lastPlayer +" gets 2 score for 15 points");
-                        scoreManager.addScoreToPlayer(2, s.lastPlayer, "fifteen," + cribbageCardInfoManager.canonical(s.segment));
-                    }
+                    /* has been calculated in strategy */
+
                     if (!s.go) { // if it is "go" then same player gets another turn
                         currentPlayer = (currentPlayer + 1) % 2;
                     }
@@ -291,27 +288,27 @@ public class Cribbage extends CardGame {
         }
     }
 
-    void showHandsCrib() {
+    void showHandsCrib(CribbageScoreStrategy showPhaseStrategy) {
         System.out.println("show");
         // score player 0 (non dealer)
         showCards(0);
 
         /* calc pair score demo */
-        pairDemoStrategy.calcShowScore(0,
-                historyManager.getCardHistoryPile("strategy" +0),
+        showPhaseStrategy.calcScore(0,
+                historyManager.getCardHistoryPile("player" +0),
                 starter);
 
         // score player 1 (dealer)
         showCards(1);
         /* calc pair score demo */
-        pairDemoStrategy.calcShowScore(1,
-                historyManager.getCardHistoryPile("strategy" +1),
+        showPhaseStrategy.calcScore(1,
+                historyManager.getCardHistoryPile("player" +1),
                 starter);
 
         // score crib (for dealer)
         showCrib(1);
         /* calc pair score demo */
-        pairDemoStrategy.calcShowScore(1,
+        showPhaseStrategy.calcScore(1,
                 crib,
                 starter);
 
@@ -324,7 +321,7 @@ public class Cribbage extends CardGame {
                     "," +
                     cribbageCardInfoManager.canonical(starter.getFirst()) +
                     "+" +
-                    cribbageCardInfoManager.canonical(historyManager.getCardHistoryPile("strategy" +player)));
+                    cribbageCardInfoManager.canonical(historyManager.getCardHistoryPile("player" +player)));
             return;
         }
 
@@ -360,7 +357,7 @@ public class Cribbage extends CardGame {
 
         /* instantiate a ScoreManager for nPlayers */
         /* set up score Manager Factory */
-        scoreManagerFactory = CardGameScoreManagerFactory.getInstance();
+        CardGameScoreManagerFactory scoreManagerFactory = CardGameScoreManagerFactory.getInstance();
         /* create a scoreManager for this Cribbage game */
         scoreManager = scoreManagerFactory.getScoreManager("Cribbage", nPlayers, this);
         scoreManager.initScores();
@@ -375,7 +372,22 @@ public class Cribbage extends CardGame {
         historyManager = new CardHistoryManager(deck);
 
         /* init strategy */
-        pairDemoStrategy = new PairScoreStrategy(deck, cribbageCardInfoManager, scoreManager);
+        CribbageScoreStrategyFactory scoreStrategyFactory = CribbageScoreStrategyFactory.getInstance();
+
+        CribbageScoreStrategy playPhaseStrategy = scoreStrategyFactory.getCompositePhaseStrategy(
+                cribbageCardInfoManager,
+                scoreManager,
+                deck,
+                "play"
+        );
+
+        CribbageScoreStrategy showPhaseStrategy = scoreStrategyFactory.getCompositePhaseStrategy(
+                cribbageCardInfoManager,
+                scoreManager,
+                deck,
+                "show"
+        );
+
 
         Hand pack = deck.toHand(false);
         RowLayout layout = new RowLayout(starterLocation, 0);
@@ -389,8 +401,8 @@ public class Cribbage extends CardGame {
         deal(pack, hands);
         discardToCrib();
         starter(pack);
-        play();
-        showHandsCrib();
+        play(playPhaseStrategy);
+        showHandsCrib(showPhaseStrategy);
 
         addActor(new Actor("sprites/gameover.gif"), textLocation);
         setStatusText("Game over.");

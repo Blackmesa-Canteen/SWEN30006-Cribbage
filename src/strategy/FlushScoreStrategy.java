@@ -24,13 +24,7 @@ public class FlushScoreStrategy implements CribbageScoreStrategy {
     }
 
     @Override
-    public void calcPlayScore(int player, Card newCard, Hand segmentHand) {
-        // Play phase don't handle flush
-        return;
-    }
-
-    @Override
-    public void calcShowScore(int player, Hand playerHand, Hand starter) {
+    public void calcScore(int player, Hand segmentHand, Hand starter) {
 
     }
 }

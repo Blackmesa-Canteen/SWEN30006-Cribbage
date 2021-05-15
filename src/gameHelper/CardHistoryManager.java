@@ -1,4 +1,4 @@
-package scoreManager;
+package gameHelper;
 
 import ch.aplu.jcardgame.Card;
 import ch.aplu.jcardgame.Deck;
