@@ -56,20 +56,20 @@ public class PlayPhasePairScoreStrategy implements CribbageScoreStrategy {
         switch (pairNum) {
             case 2:
                 scores = score_for_pair2;
+                scoreManager.addScoreToPlayer(scores, player, "pair");
                 break;
             case 3:
                 scores = score_for_pair3;
+                scoreManager.addScoreToPlayer(scores, player, "pair3");
                 break;
             case 4:
                 scores = score_for_pair4;
+                scoreManager.addScoreToPlayer(scores, player, "pair4");
                 break;
             default:
                 break;
         }
 
-        if(scores != 0) {
-            scoreManager.addScoreToPlayer(scores, player, "pair");
-        }
     }
 
 }

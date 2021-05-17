@@ -31,18 +31,22 @@ public class ShowPhaseTotalPointsStrategy implements CribbageScoreStrategy {
         final int score_for_fifteen = 2;
 
         Hand calculationHand = new Hand(deck);
+        Hand handWithoutStarter = new Hand(deck);
 
         /* set up calculationHand for counting scores */
         /* cards in hand + starter */
         for(Card card : segmentHand.getCardList()) {
             calculationHand.insert(card.clone(), false);
+            handWithoutStarter.insert(card.clone(), false);
         }
 
+        /* add starter card to the calculationHand */
         for(Card card : starter.getCardList()) {
             calculationHand.insert(card.clone(), false);
         }
 
         calculationHand.sort(Hand.SortType.POINTPRIORITY, false);
+        handWithoutStarter.sort(Hand.SortType.POINTPRIORITY, false);
 
         //TODO: total calc for Show phase
 
