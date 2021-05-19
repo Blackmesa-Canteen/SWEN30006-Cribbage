@@ -38,12 +38,6 @@ public class PlayPhasePairScoreStrategy implements CribbageScoreStrategy {
 
         int tailPtr = cards.size() - 1;
 
-//        for(Card card : cards) {
-//            if(card.getRank().equals(newCard.getRank())) {
-//                pairNum++;
-//            }
-//        }
-
         /* find continuous pairs from tail of the segment hand */
         for(int i = tailPtr; i > 0; i--){
             if(cards.get(i).getRank().equals(cards.get(i -1).getRank())) {
@@ -56,7 +50,7 @@ public class PlayPhasePairScoreStrategy implements CribbageScoreStrategy {
         switch (pairNum) {
             case 2:
                 scores = score_for_pair2;
-                scoreManager.addScoreToPlayer(scores, player, "pair");
+                scoreManager.addScoreToPlayer(scores, player, "pair2");
                 break;
             case 3:
                 scores = score_for_pair3;

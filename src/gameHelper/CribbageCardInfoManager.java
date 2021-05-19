@@ -76,4 +76,9 @@ public class CribbageCardInfoManager {
     public static int cardValue(Card c) {
         return ((Rank) c.getRank()).value;
     }
+
+    public int getCardOrder(Card c) {
+        Rank rank = (Rank) c.getRank();
+        return rank.order;
+    }
 }
