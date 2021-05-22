@@ -29,7 +29,9 @@ public class ShowPhaseRunScoreStrategy implements CribbageScoreStrategy {
     @Override
     public void calcScore(int player, Hand segmentHand, Hand starter) {
         Hand calculationHand = new Hand(deck);
-
+        final int score_for_run3 = 3;
+        final int score_for_pair4 = 4;
+        final int score_for_pair5 = 5;
         /* set up calculationHand for counting scores */
         /* cards in hand + starter */
         for(Card card : segmentHand.getCardList()) {
@@ -40,7 +42,7 @@ public class ShowPhaseRunScoreStrategy implements CribbageScoreStrategy {
             calculationHand.insert(card.clone(), false);
         }
 
-        calculationHand.sort(Hand.SortType.POINTPRIORITY, false);
+//        System.out.println(calculationHand.toString());
 
         //TODO: Show Phase Run
     }
