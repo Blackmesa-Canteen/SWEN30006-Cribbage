@@ -74,7 +74,6 @@ public class ShowPhaseRunScoreStrategy implements CribbageScoreStrategy {
             combinations(cards, hands, newCards, 0, cardsSize - 1, 0, r$);
         }
         for (Hand hand: hands){
-            System.out.println(hand.getCardList());
             if (hand.getCardList().size() == 3){
                 boolean run3 = true;
                 for (i=0; i < hand.getCardList().size() - 1; i++){
