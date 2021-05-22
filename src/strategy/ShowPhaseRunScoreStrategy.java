@@ -61,7 +61,7 @@ public class ShowPhaseRunScoreStrategy implements CribbageScoreStrategy {
         }
         if (run5) {
             scores = run5Score;
-            scoreManager.addScoreToPlayer(scores, player, "run5");
+            scoreManager.addScoreToPlayer(scores, player, "run5," + cardInfoManager.canonical(calculationHand));
         }
 
         // check if run3 and run4 works
@@ -88,7 +88,7 @@ public class ShowPhaseRunScoreStrategy implements CribbageScoreStrategy {
                 }
                 if (run3) {
                     scores = run3Score;
-                    scoreManager.addScoreToPlayer(scores, player, "run3");
+                    scoreManager.addScoreToPlayer(scores, player, "run3," + cardInfoManager.canonical(hand));
                 }
             }
             else if (hand.getCardList().size() == 4){
@@ -105,7 +105,7 @@ public class ShowPhaseRunScoreStrategy implements CribbageScoreStrategy {
                 }
                 if (run4) {
                     scores = run4Score;
-                    scoreManager.addScoreToPlayer(scores, player, "run4");
+                    scoreManager.addScoreToPlayer(scores, player, "run4," + cardInfoManager.canonical(hand));
                 }
             }
         }
