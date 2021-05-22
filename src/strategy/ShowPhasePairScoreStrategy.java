@@ -7,7 +7,6 @@ import gameHelper.CribbageCardInfoManager;
 import scoreManager.CardGameScoreManager;
 
 /**
- * @author Xiaotian
  * @program Cribbage
  * @description
  * @create 2021-05-15 10:04

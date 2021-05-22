@@ -9,7 +9,6 @@ import scoreManager.CardGameScoreManager;
 import java.util.ArrayList;
 
 /**
- * @author Xiaotian
  * @program Cribbage
  * @description
  * @create 2021-05-15 09:49

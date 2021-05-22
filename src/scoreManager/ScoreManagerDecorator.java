@@ -1,7 +1,6 @@
 package scoreManager;
 
 /**
- * @author Xiaotian
  * @program Cribbage
  * @description
  * @create 2021-05-13 10:05
