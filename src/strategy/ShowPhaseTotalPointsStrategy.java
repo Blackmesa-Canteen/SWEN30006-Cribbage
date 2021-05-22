@@ -50,8 +50,7 @@ public class ShowPhaseTotalPointsStrategy implements CribbageScoreStrategy {
         calculationHand.sort(Hand.SortType.POINTPRIORITY, false);
         handWithoutStarter.sort(Hand.SortType.POINTPRIORITY, false);
 
-        ArrayList cards = calculationHand.getCardList();
-        int cardsSize = cards.size();
+
         //TODO: total calc for Show phase
         /* Determine whether the starter Cards is Jack*/
 
@@ -68,7 +67,7 @@ public class ShowPhaseTotalPointsStrategy implements CribbageScoreStrategy {
     }
 
     private ArrayList<Hand> totalFifteen(Hand calculationHand) {
-        ArrayList cards = calculationHand.getCardList();
+        ArrayList<Card> cards = calculationHand.getCardList();
         int cardsSize = cards.size();
         ArrayList<Hand> hands = new ArrayList<>();
         ArrayList<Card> newCards = new ArrayList<>();
