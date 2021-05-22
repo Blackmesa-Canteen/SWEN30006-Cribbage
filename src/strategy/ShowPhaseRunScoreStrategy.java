@@ -42,7 +42,6 @@ public class ShowPhaseRunScoreStrategy implements CribbageScoreStrategy {
             calculationHand.insert(card.clone(), false);
         }
 
-//        System.out.println(calculationHand.toString());
 
         //TODO: Show Phase Run
     }

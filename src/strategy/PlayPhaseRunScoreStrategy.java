@@ -29,16 +29,17 @@ public class PlayPhaseRunScoreStrategy implements CribbageScoreStrategy {
 
     @Override
     public void calcScore(int player, Hand segmentHand, Hand starter) {
-        //TODO: run score calc for play phase
+//        TODO: run score calc for play phase
         final int score_for_run3 = 3;
         final int score_for_run4 = 4;
         final int score_for_run5 = 5;
         final int score_for_run6 = 6;
         final int score_for_run7 = 7;
-        ArrayList<Card> cards = segmentHand.getCardList();
+
+        Hand calculationHand = new Hand(deck);
+        ArrayList<Card> cards = calculationHand.getCardList();
         int runNum =1;
         if (cards.size() > 2) {
-            Hand calculationHand = new Hand(deck);
             int maxRun = cards.size();
             if (cards.size() > 7) {
                 maxRun = 7;
