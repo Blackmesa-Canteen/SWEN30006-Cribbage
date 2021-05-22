@@ -55,7 +55,7 @@ public class ShowPhaseRunScoreStrategy implements CribbageScoreStrategy {
             Card nextCard = calculationHand.getCardList().get(i+1);
             int currentCardNum = cardInfoManager.getCardOrder(currentCard);
             int nextCardNum = cardInfoManager.getCardOrder(nextCard);
-            if (nextCardNum - currentCardNum != 1){
+            if (nextCardNum - currentCardNum != 1 && nextCardNum - currentCardNum != 12){
                 run5 = false;
             }
         }
@@ -81,7 +81,7 @@ public class ShowPhaseRunScoreStrategy implements CribbageScoreStrategy {
                     Card nextCard = hand.getCardList().get(i+1);
                     int currentCardNum = cardInfoManager.getCardOrder(currentCard);
                     int nextCardNum = cardInfoManager.getCardOrder(nextCard);
-                    if (nextCardNum - currentCardNum != 1){
+                    if (nextCardNum - currentCardNum != 1 && nextCardNum - currentCardNum != 12){
                         run3 = false;
                         break;
                     }
@@ -98,7 +98,7 @@ public class ShowPhaseRunScoreStrategy implements CribbageScoreStrategy {
                     Card nextCard = hand.getCardList().get(i+1);
                     int currentCardNum = cardInfoManager.getCardOrder(currentCard);
                     int nextCardNum = cardInfoManager.getCardOrder(nextCard);
-                    if (nextCardNum - currentCardNum != 1){
+                    if (nextCardNum - currentCardNum != 1 && nextCardNum - currentCardNum != 12){
                         run4 = false;
                         break;
                     }
