@@ -29,7 +29,6 @@ public class PlayPhaseRunScoreStrategy implements CribbageScoreStrategy {
 
     @Override
     public void calcScore(int player, Hand segmentHand, Hand starter) {
-
         final int score_for_run3 = 3;
         final int score_for_run4 = 4;
         final int score_for_run5 = 5;
