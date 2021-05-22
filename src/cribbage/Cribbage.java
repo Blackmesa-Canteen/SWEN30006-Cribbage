@@ -226,7 +226,7 @@ public class Cribbage extends CardGame {
         while (true) {
             /* if all players have no cards, the player who placed the last card scores one point */
             if((players[0].emptyHand() && players[1].emptyHand())) {
-                System.out.println("player " + currentPlayer + " 和另一个玩家全没牌了，另一玩家是最后出牌的，go得一分");
+                System.out.println("player " + currentPlayer + " has no cards.");
                 System.out.println("player " + s.lastPlayer +" gets 1 go score");
                 scoreManager.addScoreToPlayer(1, s.lastPlayer, "go");
                 break;
@@ -236,7 +236,7 @@ public class Cribbage extends CardGame {
             Card nextCard = players[currentPlayer].lay(thirtyone - total(s.segment));
             System.out.println("player: " + currentPlayer +" playing");
             if (nextCard == null) {
-                System.out.println("player " +currentPlayer+"没牌了,判断这轮go不go: " + s.go);
+                System.out.println("player " +currentPlayer+": " + s.go);
                 if (s.go) {
                     // Another "go" after previous one with no intervening cards
                     // lastPlayer gets 1 point for a "go"
