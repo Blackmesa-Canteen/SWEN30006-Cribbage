@@ -14,8 +14,8 @@ import java.util.HashMap;
  */
 public class CardHistoryManager {
 
-    Deck deck;
-    HashMap<String, Hand> pile;
+    private Deck deck;
+    private HashMap<String, Hand> pile;
 
     public CardHistoryManager(Deck deck) {
         pile = new HashMap<>();
