@@ -55,7 +55,7 @@ public class ShowPhaseRunScoreStrategy implements CribbageScoreStrategy {
             Card nextCard = calculationHand.getCardList().get(i+1);
             int currentCardNum = cardInfoManager.getCardOrder(currentCard);
             int nextCardNum = cardInfoManager.getCardOrder(nextCard);
-            if (nextCardNum - currentCardNum != 1 && nextCardNum - currentCardNum != 12){
+            if (nextCardNum - currentCardNum != 1){
                 run5 = false;
             }
         }
@@ -83,9 +83,7 @@ public class ShowPhaseRunScoreStrategy implements CribbageScoreStrategy {
                 int card2Num = cardInfoManager.getCardOrder(card2);
                 int card3Num = cardInfoManager.getCardOrder(card3);
                 System.out.println(hand.getCardList());
-                if ((card3Num - card2Num == 1 && card2Num - card1Num == 1)  || // J Q K
-                        (card3Num - card2Num == 1 && card2Num - card1Num == 11) || // A Q K
-                        (card3Num - card2Num == 11 && card2Num - card1Num == 1)) { // A 2 K
+                if (card3Num - card2Num == 1 && card2Num - card1Num == 1) {
                     run3 = true;
                 }
                 if (run3) {
@@ -103,10 +101,7 @@ public class ShowPhaseRunScoreStrategy implements CribbageScoreStrategy {
                 int card2Num = cardInfoManager.getCardOrder(card2);
                 int card3Num = cardInfoManager.getCardOrder(card3);
                 int card4Num = cardInfoManager.getCardOrder(card4);
-                if ((card4Num - card3Num == 1 && card3Num - card2Num == 1 && card2Num - card1Num == 1)  ||      // 10 J Q K
-                        (card4Num - card3Num == 1 && card3Num - card2Num == 1 && card2Num - card1Num == 10) ||  // A J Q K
-                        (card4Num - card3Num == 1 && card3Num - card2Num == 10 && card2Num - card1Num == 1) ||  // A 2 Q K
-                        (card4Num - card3Num == 10 && card3Num - card2Num == 1 && card2Num - card1Num == 1)) {  // A 2 3 K
+                if (card4Num - card3Num == 1 && card3Num - card2Num == 1 && card2Num - card1Num == 1) {
                     run4 = true;
                 }
 
