@@ -7,6 +7,7 @@ import scoreManager.CardGameScoreManager;
 import gameHelper.CribbageCardInfoManager;
 
 import java.lang.reflect.Array;
+import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -36,22 +37,19 @@ public class PlayPhaseRunScoreStrategy implements CribbageScoreStrategy {
         final int score_for_run7 = 7;
 
         Hand calculationHand = new Hand(deck);
-        ArrayList<Card> cards = calculationHand.getCardList();
-        int runNum =1;
-        if (cards.size() > 2) {
-            int maxRun = cards.size();
-            if (cards.size() > 7) {
-                maxRun = 7;
-            }
-            int i$;
-            for (i$ = maxRun; i$ > 0; i$--) {
-                calculationHand.insert(cards.get(i$ - 1), false);
-            }
-            runNum = maxRun;
+
+        for(Card card : segmentHand.getCardList()) {
+            calculationHand.insert(card.clone(), false);
+        }
+        ArrayList<Card> cards = segmentHand.getCardList();
+        int maxRun = cards.size();
+        int runNum = maxRun;
+        if(maxRun >2) {
             mainloop:
-            for (i$ = 0; i$ < maxRun; i$++) {
+            for (int i$ = 0; i$ < maxRun; i$++) {
                 calculationHand.sort(Hand.SortType.POINTPRIORITY, false);
                 ArrayList<Card> sortCards = calculationHand.getCardList();
+                System.out.println(sortCards.toString());
                 for (int j$ = sortCards.size() - 1; j$ > 0; j$--) {
                     if (cardInfoManager.getCardOrder(sortCards.get(j$)) !=
                             cardInfoManager.getCardOrder(sortCards.get(j$ - 1)) + 1) {
@@ -63,6 +61,7 @@ public class PlayPhaseRunScoreStrategy implements CribbageScoreStrategy {
             }
         }
         int scores = 0;
+        System.out.println(segmentHand);
         switch (runNum) {
             case 3:
                 scores = score_for_run3;
