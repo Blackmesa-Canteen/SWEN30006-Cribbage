@@ -44,9 +44,9 @@ public class PlayPhaseTotalPointsStrategy implements CribbageScoreStrategy {
             scoreManager.addScoreToPlayer(score_for_thirty_one, player, "thirtyone");
         }
         else if (total(calculationHand) == 15) {
-            // lastPlayer gets 'score_for_fifteen' points for a 31
-            System.out.println("strategy " + player + " gets "+ score_for_fifteen + " score for 31 points");
-            scoreManager.addScoreToPlayer(score_for_fifteen, player, "thirtyone");
+            // lastPlayer gets 'score_for_fifteen' points for a 15
+            System.out.println("strategy " + player + " gets "+ score_for_fifteen + " score for 15 points");
+            scoreManager.addScoreToPlayer(score_for_fifteen, player, "fifteen");
         }
     }
 
