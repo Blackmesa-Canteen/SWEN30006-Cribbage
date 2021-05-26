@@ -82,7 +82,6 @@ public class ShowPhaseRunScoreStrategy implements CribbageScoreStrategy {
                 int card1Num = cardInfoManager.getCardOrder(card1);
                 int card2Num = cardInfoManager.getCardOrder(card2);
                 int card3Num = cardInfoManager.getCardOrder(card3);
-                System.out.println(hand.getCardList());
                 if (card3Num - card2Num == 1 && card2Num - card1Num == 1) {
                     run3 = true;
                 }

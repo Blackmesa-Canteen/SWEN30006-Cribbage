@@ -36,26 +36,27 @@ public class PlayPhaseRunScoreStrategy implements CribbageScoreStrategy {
         final int score_for_run7 = 7;
 
         Hand calculationHand = new Hand(deck);
-        ArrayList<Card> cards = calculationHand.getCardList();
+        /* set up calculationHand for counting scores */
+        /* cards in hand + starter */
+        for(Card card : segmentHand.getCardList()) {
+            calculationHand.insert(card.clone(), false);
+        }
+        ArrayList<Card> cards = new ArrayList<>();
+        for (Card card: calculationHand.getCardList()){
+            cards.add(card);
+        }
         int runNum =1;
         if (cards.size() > 2) {
             int maxRun = cards.size();
-            if (cards.size() > 7) {
-                maxRun = 7;
-            }
-            int i$;
-            for (i$ = maxRun; i$ > 0; i$--) {
-                calculationHand.insert(cards.get(i$ - 1), false);
-            }
             runNum = maxRun;
             mainloop:
-            for (i$ = 0; i$ < maxRun; i$++) {
+            for (int i$ = 0; i$ < maxRun; i$++) {
                 calculationHand.sort(Hand.SortType.POINTPRIORITY, false);
                 ArrayList<Card> sortCards = calculationHand.getCardList();
                 for (int j$ = sortCards.size() - 1; j$ > 0; j$--) {
                     if (cardInfoManager.getCardOrder(sortCards.get(j$)) !=
                             cardInfoManager.getCardOrder(sortCards.get(j$ - 1)) + 1) {
-                        calculationHand.remove(cards.get(maxRun - runNum), false);
+                        calculationHand.remove(cards.get(i$), false);
                         runNum -= 1;
                         continue mainloop;
                     }
