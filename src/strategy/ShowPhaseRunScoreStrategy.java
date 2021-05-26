@@ -46,6 +46,8 @@ public class ShowPhaseRunScoreStrategy implements CribbageScoreStrategy {
             calculationHand.insert(card.clone(), false);
         }
 
+        calculationHand.sort(Hand.SortType.POINTPRIORITY, false);
+
         // check if run5 works
         boolean run5 = true;
         for (i=0; i < calculationHand.getCardList().size() - 1; i++) {
@@ -73,16 +75,18 @@ public class ShowPhaseRunScoreStrategy implements CribbageScoreStrategy {
         }
         for (Hand hand: hands){
             if (hand.getCardList().size() == 3){
-                boolean run3 = true;
-                for (i=0; i < hand.getCardList().size() - 1; i++){
-                    Card currentCard = hand.getCardList().get(i);
-                    Card nextCard = hand.getCardList().get(i+1);
-                    int currentCardNum = cardInfoManager.getCardOrder(currentCard);
-                    int nextCardNum = cardInfoManager.getCardOrder(nextCard);
-                    if (nextCardNum - currentCardNum != 1 && nextCardNum - currentCardNum != 12){
-                        run3 = false;
-                        break;
-                    }
+                boolean run3 = false;
+                Card card1 = hand.getCardList().get(0);
+                Card card2 = hand.getCardList().get(1);
+                Card card3 = hand.getCardList().get(2);
+                int card1Num = cardInfoManager.getCardOrder(card1);
+                int card2Num = cardInfoManager.getCardOrder(card2);
+                int card3Num = cardInfoManager.getCardOrder(card3);
+                System.out.println(hand.getCardList());
+                if ((card3Num - card2Num == 1 && card2Num - card1Num == 1)  || // J Q K
+                        (card3Num - card2Num == 1 && card2Num - card1Num == 11) || // A Q K
+                        (card3Num - card2Num == 11 && card2Num - card1Num == 1)) { // A 2 K
+                    run3 = true;
                 }
                 if (run3) {
                     scores = run3Score;
@@ -90,17 +94,22 @@ public class ShowPhaseRunScoreStrategy implements CribbageScoreStrategy {
                 }
             }
             else if (hand.getCardList().size() == 4){
-                boolean run4 = true;
-                for (i=0; i < hand.getCardList().size() - 1; i++){
-                    Card currentCard = hand.getCardList().get(i);
-                    Card nextCard = hand.getCardList().get(i+1);
-                    int currentCardNum = cardInfoManager.getCardOrder(currentCard);
-                    int nextCardNum = cardInfoManager.getCardOrder(nextCard);
-                    if (nextCardNum - currentCardNum != 1 && nextCardNum - currentCardNum != 12){
-                        run4 = false;
-                        break;
-                    }
+                boolean run4 = false;
+                Card card1 = hand.getCardList().get(0);
+                Card card2 = hand.getCardList().get(1);
+                Card card3 = hand.getCardList().get(2);
+                Card card4 = hand.getCardList().get(3);
+                int card1Num = cardInfoManager.getCardOrder(card1);
+                int card2Num = cardInfoManager.getCardOrder(card2);
+                int card3Num = cardInfoManager.getCardOrder(card3);
+                int card4Num = cardInfoManager.getCardOrder(card4);
+                if ((card4Num - card3Num == 1 && card3Num - card2Num == 1 && card2Num - card1Num == 1)  ||      // 10 J Q K
+                        (card4Num - card3Num == 1 && card3Num - card2Num == 1 && card2Num - card1Num == 10) ||  // A J Q K
+                        (card4Num - card3Num == 1 && card3Num - card2Num == 10 && card2Num - card1Num == 1) ||  // A 2 Q K
+                        (card4Num - card3Num == 10 && card3Num - card2Num == 1 && card2Num - card1Num == 1)) {  // A 2 3 K
+                    run4 = true;
                 }
+
                 if (run4) {
                     scores = run4Score;
                     scoreManager.addScoreToPlayer(scores, player, "run4," + cardInfoManager.canonical(hand));
